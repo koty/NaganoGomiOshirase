@@ -25,6 +25,7 @@ namespace NaganoGomiOshirase.ViewModels
 		{
 
 		}
+		GomiCalendar _gomi_calendar;
 
 		public void OnNavigatedFrom(NavigationParameters parameters)
 		{
@@ -42,18 +43,22 @@ namespace NaganoGomiOshirase.ViewModels
 			{
 				var json = reader.ReadToEnd();
 				// dynamic gomi_calendars = JObject.Parse(json);
-				var gomi_calendars = JsonConvert.DeserializeObject<Dictionary<string, GomiCalendar[]>>(json);
-				foreach (var gomi_calendar in gomi_calendars)
-				{
-					System.Diagnostics.Debug.WriteLine(gomi_calendar);
-				}
+				var gomiCalendarDic = JsonConvert.DeserializeObject<Dictionary<string, GomiCalendarRec[]>>(json);
+				_gomi_calendar = new GomiCalendar(gomiCalendarDic);
 			}
 		}
 	}
+	public class GomiCalendarRec
+	{
+		public DateTime date { get; set; }
+		public string kind { get; set; }
+	}
 	public class GomiCalendar
 	{
-		public DateTime date { get; private set; }
-		public string kind { get; private set; }
+		Dictionary<string, GomiCalendarRec[]> _gomiCalendarDic;
+		public GomiCalendar(Dictionary<string, GomiCalendarRec[]> gomiCalendarDic)
+		{
+			_gomiCalendarDic = gomiCalendarDic;
+		}
 	}
 }
-
