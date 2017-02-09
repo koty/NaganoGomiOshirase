@@ -1,6 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms" prism:ViewModelLocator.AutowireViewModel="True" x:Class="NaganoGomiOshirase.Views.MainPage" Title="MainPage">
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+		xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+		xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+		prism:ViewModelLocator.AutowireViewModel="True"
+		x:Class="NaganoGomiOshirase.Views.MainPage"
+		Title="MainPage">
 	<StackLayout HorizontalOptions="Center" VerticalOptions="Center">
 		<Label Text="{Binding Title}" />
+		<ListView ItemsSource="{Binding RecentCalendarRec}">
+			<ListView.ItemTemplate>
+				<DataTemplate>
+					<ViewCell>
+						<StackLayout Orientation="Horizontal" BackgroundColor="{Binding color}">
+							<Label Text="{Binding kind}" FontSize="20" />
+							<Label Text="{Binding date_formated}" FontSize="20" />
+						</StackLayout>
+					</ViewCell>
+				</DataTemplate>
+			</ListView.ItemTemplate>
+		</ListView>
 	</StackLayout>
 </ContentPage>

@@ -11,7 +11,7 @@ namespace NaganoGomiOshirase
 		{
 			InitializeComponent();
 
-			NavigationService.NavigateAsync("MainPage?title=Hello%20from%20Xamarin.Forms");
+			NavigationService.NavigateAsync("MainPage?title=H29年度 あなたの地区のごみカレンダー");
 		}
 
 		protected override void RegisterTypes()

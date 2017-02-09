@@ -45,6 +45,7 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="gomi_calendar.json" />
+    <EmbeddedResource Include="holiday_list.json" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Prism">
