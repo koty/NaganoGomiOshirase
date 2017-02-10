@@ -11,12 +11,20 @@ namespace NaganoGomiOshirase
 		{
 			InitializeComponent();
 
-			NavigationService.NavigateAsync("MainPage?title=長野市アンオフィシャルごみカレンダー");
+			NavigationService.NavigateAsync("MainPage?title=長野市unofficialごみカレンダー");
 		}
-
 		protected override void RegisterTypes()
 		{
 			Container.RegisterTypeForNavigation<MainPage>();
+		}
+		protected override void OnSleep()
+		{
+			(MainPage.BindingContext as IApplicationLifecycle)?.OnSleep();
+		}
+
+		protected override void OnResume()
+		{
+			(MainPage.BindingContext as IApplicationLifecycle)?.OnResume();
 		}
 	}
 }

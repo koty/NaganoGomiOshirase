@@ -12,7 +12,7 @@ using Microsoft.Practices.Unity;
 
 namespace NaganoGomiOshirase.Droid
 {
-	[Activity(Label = "長野市アンオフィシャルごみカレンダー", Icon = "@drawable/trashcan", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+	[Activity(Label = "長野市unofficialごみカレンダー", Icon = "@drawable/trashcan", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
 	public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
 	{
 		protected override void OnCreate(Bundle bundle)
@@ -21,8 +21,10 @@ namespace NaganoGomiOshirase.Droid
 
 			global::Xamarin.Forms.Forms.Init(this, bundle);
 
-			Settings.prefs = BaseContext.GetSharedPreferences("SaveData", FileCreationMode.Private);
 			LoadApplication(new App(new AndroidInitializer()));
+
+			var alarmManager = GetSystemService(AlarmService).JavaCast<AlarmManager>();
+			Alerm.Register(alarmManager, this);
 		}
 	}
 

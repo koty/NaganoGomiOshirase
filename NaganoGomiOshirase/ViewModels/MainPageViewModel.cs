@@ -10,7 +10,7 @@ using Xamarin.Forms;
 
 namespace NaganoGomiOshirase.ViewModels
 {
-	public class MainPageViewModel : BindableBase, INavigationAware
+	public class MainPageViewModel : BindableBase, INavigationAware, IApplicationLifecycle
 	{
 		string _title;
 		public string Title
@@ -38,32 +38,39 @@ namespace NaganoGomiOshirase.ViewModels
 
 		internal static HashSet<DateTime> _holidays;
 		internal static HashSet<DateTime> holidays { get { return _holidays; } }
-		readonly ISettings _settings;
 		static MainPageViewModel()
 		{
 			var __holidays = ReadJson<Dictionary<int, string>>("NaganoGomiOshirase.holiday_list.json")
 				.Select(x => FromUnixTime(x.Key));
 			_holidays = new HashSet<DateTime>(__holidays);
 
-		}
-		public MainPageViewModel()
-		{
 			var gomiCalendarDic = ReadJson<Dictionary<string, GomiCalendarRec[]>>("NaganoGomiOshirase.gomi_calendar.json");
 			_gomi_calendar = new GomiCalendar(gomiCalendarDic);
 
 			_calendar_no_list = ReadJson<Dictionary<int, string>>("NaganoGomiOshirase.calendar_no_list.json")
 				.Select(x => new KeyValuePair<int, string>(x.Key, x.Key + " " + x.Value)).ToList();
-			_settings = DependencyService.Get<ISettings>();
-			// var saved_selected_calendar_no = _settings.GetValue<int>("SelectedCalendarNo", 1);
 			if (!Application.Current.Properties.ContainsKey("selected_calendar_no"))
 			{
 				Application.Current.Properties["selected_calendar_no"] = 1;
 			}
+
+		}
+		public MainPageViewModel()
+		{
 			var saved_selected_calendar_no = int.Parse(Application.Current.Properties["selected_calendar_no"].ToString());
 			_selected_calendar_no = calendar_no_list.First(x => x.Key == saved_selected_calendar_no);
 		}
-		GomiCalendar _gomi_calendar;
-		List<KeyValuePair<int, string>> _calendar_no_list;
+		public static GomiCalendarRec[] GetToday()
+		{
+			var saved_selected_calendar_no = int.Parse(Application.Current.Properties["selected_calendar_no"].ToString());
+			var _selected_calendar_no = _calendar_no_list.First(x => x.Key == saved_selected_calendar_no);
+			var today = DateTime.Today;
+			var recs = _gomi_calendar.GetCalendar(_selected_calendar_no.Key).OrderBy(x => x.date).Where(x => x.date == today).ToArray();
+			return recs;
+			
+		}
+		static GomiCalendar _gomi_calendar;
+		static List<KeyValuePair<int, string>> _calendar_no_list;
 		public List<KeyValuePair<int, string>> calendar_no_list { get { return _calendar_no_list; } }
 
 		KeyValuePair<int, string> _selected_calendar_no;
@@ -97,7 +104,18 @@ namespace NaganoGomiOshirase.ViewModels
 			if (parameters.ContainsKey("title"))
 				Title = (string)parameters["title"];
 		}
+
+		public void OnSleep()
+		{
+			// do nothing
+		}
+
+		public void OnResume()
+		{
+			OnPropertyChanged(nameof(RecentCalendarRec));
+		}
 	}
+
 	public class GomiCalendarRec
 	{
 		public DateTime date { get; set; }
