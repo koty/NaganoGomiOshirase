@@ -1,12 +1,10 @@
-﻿using Prism.Commands;
-using Prism.Mvvm;
+﻿using Prism.Mvvm;
 using Prism.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.IO;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using Xamarin.Forms;
 
@@ -27,39 +25,65 @@ namespace NaganoGomiOshirase.ViewModels
 		{
 			return UNIX_EPOCH.AddSeconds(unixTime).ToLocalTime();
 		}
-		static MainPageViewModel()
+		static T ReadJson<T>(string path)
 		{
 			var assembly = typeof(MainPageViewModel).GetTypeInfo().Assembly;
-			using (var stream = assembly.GetManifestResourceStream("NaganoGomiOshirase.holiday_list.json"))
+			using (var stream = assembly.GetManifestResourceStream(path))
 			using (var reader = new StreamReader(stream))
 			{
 				var json = reader.ReadToEnd();
-				var holidays = JsonConvert.DeserializeObject<Dictionary<int, string>>(json).Select(x => FromUnixTime(x.Key));
-				_holidays = new HashSet<DateTime>(holidays);
+				return JsonConvert.DeserializeObject<T>(json);
 			}
+		}
+
+		internal static HashSet<DateTime> _holidays;
+		internal static HashSet<DateTime> holidays { get { return _holidays; } }
+		readonly ISettings _settings;
+		static MainPageViewModel()
+		{
+			var __holidays = ReadJson<Dictionary<int, string>>("NaganoGomiOshirase.holiday_list.json")
+				.Select(x => FromUnixTime(x.Key));
+			_holidays = new HashSet<DateTime>(__holidays);
+
 		}
 		public MainPageViewModel()
 		{
-			var assembly = typeof(MainPageViewModel).GetTypeInfo().Assembly;
-			using (var stream = assembly.GetManifestResourceStream("NaganoGomiOshirase.gomi_calendar.json"))
-			using (var reader = new StreamReader(stream))
+			var gomiCalendarDic = ReadJson<Dictionary<string, GomiCalendarRec[]>>("NaganoGomiOshirase.gomi_calendar.json");
+			_gomi_calendar = new GomiCalendar(gomiCalendarDic);
+
+			_calendar_no_list = ReadJson<Dictionary<int, string>>("NaganoGomiOshirase.calendar_no_list.json")
+				.Select(x => new KeyValuePair<int, string>(x.Key, x.Key + " " + x.Value)).ToList();
+			_settings = DependencyService.Get<ISettings>();
+			// var saved_selected_calendar_no = _settings.GetValue<int>("SelectedCalendarNo", 1);
+			if (!Application.Current.Properties.ContainsKey("selected_calendar_no"))
 			{
-				var json = reader.ReadToEnd();
-				var gomiCalendarDic = JsonConvert.DeserializeObject<Dictionary<string, GomiCalendarRec[]>>(json);
-				_gomi_calendar = new GomiCalendar(gomiCalendarDic);
+				Application.Current.Properties["selected_calendar_no"] = 1;
 			}
+			var saved_selected_calendar_no = int.Parse(Application.Current.Properties["selected_calendar_no"].ToString());
+			_selected_calendar_no = calendar_no_list.First(x => x.Key == saved_selected_calendar_no);
 		}
 		GomiCalendar _gomi_calendar;
-		internal static HashSet<DateTime> _holidays;
-		internal static HashSet<DateTime> holidays { get { return _holidays; } }
-		int _selected_calendar_no = 5; // とりあえず 5固定
+		List<KeyValuePair<int, string>> _calendar_no_list;
+		public List<KeyValuePair<int, string>> calendar_no_list { get { return _calendar_no_list; } }
 
+		KeyValuePair<int, string> _selected_calendar_no;
+		public KeyValuePair<int, string> selected_calendar_no
+		{
+			get { return _selected_calendar_no; }
+			set
+			{
+				SetProperty(ref _selected_calendar_no, value);
+				OnPropertyChanged(nameof(RecentCalendarRec));
+				Application.Current.Properties["selected_calendar_no"] = selected_calendar_no.Key;
+				//_settings.SetValue<int>("SelectCalendarNo", selected_calendar_no.Key);
+			}
+		}
 		public GomiCalendarRec[] RecentCalendarRec
 		{
 			get
 			{
 				var now = DateTime.Now;
-				var recs = _gomi_calendar.GetCalendar(_selected_calendar_no).OrderBy(x => x.date).Where(x => x.date >= now.Date).ToArray();
+				var recs = _gomi_calendar.GetCalendar(selected_calendar_no.Key).OrderBy(x => x.date).Where(x => x.date >= now.Date).ToArray();
 				return recs;
 			}
 		}
@@ -77,7 +101,7 @@ namespace NaganoGomiOshirase.ViewModels
 	public class GomiCalendarRec
 	{
 		public DateTime date { get; set; }
-		public string date_formated { get { return date.ToString("M/d(ddd)"); }}
+		public string date_formated { get { return date.ToString("M/d(ddd)"); } }
 		public string kind { get; set; }
 		public Color color
 		{
@@ -86,7 +110,8 @@ namespace NaganoGomiOshirase.ViewModels
 				if (MainPageViewModel.holidays.Any(d => d == date))
 				{
 					return Color.Pink;
-				} else {
+				}
+				else {
 					return Color.Default;
 				}
 			}
@@ -94,7 +119,7 @@ namespace NaganoGomiOshirase.ViewModels
 	}
 	public class GomiCalendar
 	{
-		Dictionary<string, GomiCalendarRec[]> _gomiCalendarDic;
+		readonly Dictionary<string, GomiCalendarRec[]> _gomiCalendarDic;
 		public GomiCalendar(Dictionary<string, GomiCalendarRec[]> gomiCalendarDic)
 		{
 			_gomiCalendarDic = gomiCalendarDic;

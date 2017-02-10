@@ -4,9 +4,14 @@
 		xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
 		prism:ViewModelLocator.AutowireViewModel="True"
 		x:Class="NaganoGomiOshirase.Views.MainPage"
-		Title="MainPage">
-	<StackLayout HorizontalOptions="Center" VerticalOptions="Center">
-		<Label Text="{Binding Title}" />
+		Title="長野市アンオフィシャルごみカレンダー">
+	<StackLayout HorizontalOptions="Center" VerticalOptions="FillAndExpand">
+		<Label Text="{Binding Title}" FontSize="24" />
+		<Picker HeightRequest="60" 
+                Title="地区を選んでください"
+				ItemsSource="{Binding calendar_no_list}"
+				SelectedItem="{Binding selected_calendar_no}"
+				ItemDisplayBinding="{Binding Value}" />
 		<ListView ItemsSource="{Binding RecentCalendarRec}">
 			<ListView.ItemTemplate>
 				<DataTemplate>

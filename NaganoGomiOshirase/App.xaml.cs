@@ -11,7 +11,7 @@ namespace NaganoGomiOshirase
 		{
 			InitializeComponent();
 
-			NavigationService.NavigateAsync("MainPage?title=H29年度 あなたの地区のごみカレンダー");
+			NavigationService.NavigateAsync("MainPage?title=長野市アンオフィシャルごみカレンダー");
 		}
 
 		protected override void RegisterTypes()
@@ -20,4 +20,3 @@ namespace NaganoGomiOshirase
 		}
 	}
 }
-
