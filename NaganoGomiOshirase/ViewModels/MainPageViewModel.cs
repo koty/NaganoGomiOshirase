@@ -49,21 +49,26 @@ namespace NaganoGomiOshirase.ViewModels
 
 			_calendar_no_list = ReadJson<Dictionary<int, string>>("NaganoGomiOshirase.calendar_no_list.json")
 				.Select(x => new KeyValuePair<int, string>(x.Key, x.Key + " " + x.Value)).ToList();
-			if (!Application.Current.Properties.ContainsKey("selected_calendar_no"))
-			{
-				Application.Current.Properties["selected_calendar_no"] = 1;
-			}
 
 		}
 		public MainPageViewModel()
 		{
-			var saved_selected_calendar_no = int.Parse(Application.Current.Properties["selected_calendar_no"].ToString());
-			_selected_calendar_no = calendar_no_list.First(x => x.Key == saved_selected_calendar_no);
+			var pref = DependencyService.Get<IPreference>();
+			var saved_selected_calendar_no = pref.GetInt("selected_calendar_no", 1);
+			if (saved_selected_calendar_no > 0)
+			{
+				_selected_calendar_no = calendar_no_list.First(x => x.Key == saved_selected_calendar_no);
+			}
 		}
 		public static GomiCalendarRec[] GetToday()
 		{
-			var saved_selected_calendar_no = int.Parse(Application.Current.Properties["selected_calendar_no"].ToString());
-			var _selected_calendar_no = _calendar_no_list.First(x => x.Key == saved_selected_calendar_no);
+			var pref = DependencyService.Get<IPreference>();
+			var saved_selected_calendar_no = pref.GetInt("selected_calendar_no", 0);
+			var _selected_calendar_no = _calendar_no_list.Where(x => x.Key == saved_selected_calendar_no).FirstOrDefault();
+			if (_selected_calendar_no.Equals(default(KeyValuePair<int, string>)))
+			{
+				return new GomiCalendarRec[] { };
+			}
 			var today = DateTime.Today;
 			var recs = _gomi_calendar.GetCalendar(_selected_calendar_no.Key).OrderBy(x => x.date).Where(x => x.date == today).ToArray();
 			return recs;
@@ -81,8 +86,8 @@ namespace NaganoGomiOshirase.ViewModels
 			{
 				SetProperty(ref _selected_calendar_no, value);
 				OnPropertyChanged(nameof(RecentCalendarRec));
-				Application.Current.Properties["selected_calendar_no"] = selected_calendar_no.Key;
-				//_settings.SetValue<int>("SelectCalendarNo", selected_calendar_no.Key);
+				var pref = DependencyService.Get<IPreference>();
+				pref.SetInt("selected_calendar_no", selected_calendar_no.Key);
 			}
 		}
 		public GomiCalendarRec[] RecentCalendarRec
@@ -145,6 +150,10 @@ namespace NaganoGomiOshirase.ViewModels
 
 		public GomiCalendarRec[] GetCalendar(int calendar_no)
 		{
+			if (!_gomiCalendarDic.ContainsKey(calendar_no.ToString()))
+			{
+				return new GomiCalendarRec[] { };
+			}
 			return _gomiCalendarDic[calendar_no.ToString()];
 		}
 	}

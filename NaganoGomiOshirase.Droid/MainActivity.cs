@@ -21,6 +21,7 @@ namespace NaganoGomiOshirase.Droid
 
 			global::Xamarin.Forms.Forms.Init(this, bundle);
 
+			AndroidPreference.context = BaseContext;
 			LoadApplication(new App(new AndroidInitializer()));
 
 			var alarmManager = GetSystemService(AlarmService).JavaCast<AlarmManager>();

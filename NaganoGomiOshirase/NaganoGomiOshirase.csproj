@@ -37,6 +37,7 @@
     </Compile>
     <Compile Include="ViewModels\MainPageViewModel.cs" />
     <Compile Include="Views\IApplicationLifecycle.cs" />
+    <Compile Include="Views\IPreference.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">

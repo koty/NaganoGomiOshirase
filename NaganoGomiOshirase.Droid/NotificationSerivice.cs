@@ -22,6 +22,7 @@ namespace NaganoGomiOshirase.Droid
 
 			var calendar = Calendar.Instance;
 			calendar.TimeInMillis = Java.Lang.JavaSystem.CurrentTimeMillis();
+			calendar.Set(CalendarField.DayOfMonth, exec_at.Day);
 			calendar.Set(CalendarField.HourOfDay, exec_at.Hour);
 			calendar.Set(CalendarField.Minute, exec_at.Minute);
 			alarmManager.Set(AlarmType.Rtc, calendar.TimeInMillis, pending);

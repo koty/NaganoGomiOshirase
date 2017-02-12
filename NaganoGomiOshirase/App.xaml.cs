@@ -19,12 +19,31 @@ namespace NaganoGomiOshirase
 		}
 		protected override void OnSleep()
 		{
-			(MainPage.BindingContext as IApplicationLifecycle)?.OnSleep();
+			if (MainPage == null)
+			{
+				return;
+			}
+			
+			var appLifecycle = MainPage.BindingContext as IApplicationLifecycle;
+			if (appLifecycle == null)
+			{
+				return;
+			}
+			appLifecycle.OnSleep();
 		}
 
 		protected override void OnResume()
 		{
-			(MainPage.BindingContext as IApplicationLifecycle)?.OnResume();
+			if (MainPage == null)
+			{
+				return;
+			}
+			var appLifecycle = MainPage.BindingContext as IApplicationLifecycle;
+			if (appLifecycle == null)
+			{
+				return;
+			}
+			appLifecycle.OnResume();
 		}
 	}
 }
