@@ -60,9 +60,12 @@ namespace NaganoGomiOshirase.ViewModels
 				_selected_calendar_no = calendar_no_list.First(x => x.Key == saved_selected_calendar_no);
 			}
 		}
-		public static GomiCalendarRec[] GetToday()
+		public static GomiCalendarRec[] GetToday(IPreference pref = null)
 		{
-			var pref = DependencyService.Get<IPreference>();
+			if (pref == null)
+			{
+				pref = DependencyService.Get<IPreference>();
+			}
 			var saved_selected_calendar_no = pref.GetInt("selected_calendar_no", 0);
 			var _selected_calendar_no = _calendar_no_list.Where(x => x.Key == saved_selected_calendar_no).FirstOrDefault();
 			if (_selected_calendar_no.Equals(default(KeyValuePair<int, string>)))

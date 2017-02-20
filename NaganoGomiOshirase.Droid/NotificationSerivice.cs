@@ -38,7 +38,8 @@ namespace NaganoGomiOshirase.Droid
 		public override void OnReceive(Context context, Intent intent)
 		{
 			// notification
-			var recs = MainPageViewModel.GetToday();
+			var pref = new AndroidPreference();
+			var recs = MainPageViewModel.GetToday(pref);
 			if (recs.Length > 0)
 			{
 				var kinds = string.Join(", ", recs.Select(x => x.kind));
