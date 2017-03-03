@@ -38,6 +38,7 @@ namespace NaganoGomiOshirase.Droid
 		public override void OnReceive(Context context, Intent intent)
 		{
 			// notification
+			AndroidPreference.context = context;
 			var pref = new AndroidPreference();
 			var recs = MainPageViewModel.GetToday(pref);
 			if (recs.Length > 0)
@@ -70,7 +71,7 @@ namespace NaganoGomiOshirase.Droid
 												.SetContentIntent(resultPendingIntent)  // Start 2nd activity when the intent is clicked.
 												.SetContentTitle(title)      // Set its title
 																			 // .SetNumber(count)                       // Display the count in the Content Info
-												.SetSmallIcon(Resource.Drawable.abc_btn_check_material)  // Display this icon
+			                                    .SetSmallIcon(Resource.Drawable.trashcan)  // Display this icon
 												.SetContentText(message); // The message to display.
 
 			// Finally, publish the notification:
