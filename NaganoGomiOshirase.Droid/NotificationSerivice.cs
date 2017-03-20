@@ -71,7 +71,7 @@ namespace NaganoGomiOshirase.Droid
 												.SetContentIntent(resultPendingIntent)  // Start 2nd activity when the intent is clicked.
 												.SetContentTitle(title)      // Set its title
 																			 // .SetNumber(count)                       // Display the count in the Content Info
-			                                    .SetSmallIcon(Resource.Drawable.trashcan)  // Display this icon
+			                                    .SetSmallIcon(Resource.Drawable.)  // Display this icon
 												.SetContentText(message); // The message to display.
 
 			// Finally, publish the notification:
