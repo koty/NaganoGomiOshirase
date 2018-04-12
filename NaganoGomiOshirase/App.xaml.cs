@@ -7,11 +7,11 @@ namespace NaganoGomiOshirase
 	{
 		public App(IPlatformInitializer initializer = null) : base(initializer) { }
 
-		protected override void OnInitialized()
+		protected override async void OnInitialized()
 		{
 			InitializeComponent();
 
-			NavigationService.NavigateAsync("MainPage?title=長野市unofficialごみカレンダー");
+			await NavigationService.NavigateAsync("MainPage?title=長野市unofficialごみカレンダー");
 		}
 		protected override void RegisterTypes()
 		{
