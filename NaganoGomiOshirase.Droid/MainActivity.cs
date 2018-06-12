@@ -1,18 +1,15 @@
-﻿using System;
-
+﻿
 using Android.App;
-using Android.Content;
 using Android.Content.PM;
 using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using Android.OS;
-using Prism.Unity;
-using Microsoft.Practices.Unity;
+using Unity;
+using Prism;
+using Prism.Ioc;
 
 namespace NaganoGomiOshirase.Droid
 {
-	[Activity(Label = "長野市unofficialごみカレンダー", Icon = "@drawable/trashcan", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "長野市unofficialごみカレンダー", Icon = "@drawable/trashcan", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
 	public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
 	{
 		protected override void OnCreate(Bundle bundle)
@@ -31,9 +28,9 @@ namespace NaganoGomiOshirase.Droid
 
 	public class AndroidInitializer : IPlatformInitializer
 	{
-		public void RegisterTypes(IUnityContainer container)
-		{
-
-		}
-	}
+        public void RegisterTypes(IContainerRegistry containerRegistry)
+        {
+            
+        }
+    }
 }

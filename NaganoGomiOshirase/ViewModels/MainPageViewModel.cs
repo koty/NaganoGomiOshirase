@@ -88,7 +88,7 @@ namespace NaganoGomiOshirase.ViewModels
 			set
 			{
 				SetProperty(ref _selected_calendar_no, value);
-				OnPropertyChanged(nameof(RecentCalendarRec));
+				RaisePropertyChanged(nameof(RecentCalendarRec));
 				var pref = DependencyService.Get<IPreference>();
 				pref.SetInt("selected_calendar_no", selected_calendar_no.Key);
 			}
@@ -107,12 +107,6 @@ namespace NaganoGomiOshirase.ViewModels
 		{
 
 		}
-		public void OnNavigatedTo(NavigationParameters parameters)
-		{
-			if (parameters.ContainsKey("title"))
-				Title = (string)parameters["title"];
-		}
-
 		public void OnSleep()
 		{
 			// do nothing
@@ -120,9 +114,20 @@ namespace NaganoGomiOshirase.ViewModels
 
 		public void OnResume()
 		{
-			OnPropertyChanged(nameof(RecentCalendarRec));
+			RaisePropertyChanged(nameof(RecentCalendarRec));
 		}
-	}
+
+        public void OnNavigatingTo(NavigationParameters parameters)
+        {
+            if (parameters.ContainsKey("title"))
+                Title = (string)parameters["title"];
+        }
+
+        public void OnNavigatedTo(NavigationParameters parameters)
+        {
+            
+        }
+    }
 
 	public class GomiCalendarRec
 	{

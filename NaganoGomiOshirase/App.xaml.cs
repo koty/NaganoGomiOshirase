@@ -1,9 +1,10 @@
-﻿using Prism.Unity;
-using NaganoGomiOshirase.Views;
+﻿using NaganoGomiOshirase.Views;
+using Prism.Ioc;
+using Prism;
 
 namespace NaganoGomiOshirase
 {
-	public partial class App : PrismApplication
+    public partial class App : Prism.Unity.PrismApplication
 	{
 		public App(IPlatformInitializer initializer = null) : base(initializer) { }
 
@@ -13,10 +14,10 @@ namespace NaganoGomiOshirase
 
 			await NavigationService.NavigateAsync("MainPage?title=長野市unofficialごみカレンダー");
 		}
-		protected override void RegisterTypes()
-		{
-			Container.RegisterTypeForNavigation<MainPage>();
-		}
+        protected override void RegisterTypes(IContainerRegistry containerRegistry)
+        {
+            containerRegistry.RegisterForNavigation<MainPage>();
+        }
 		protected override void OnSleep()
 		{
 			if (MainPage == null)
@@ -45,5 +46,5 @@ namespace NaganoGomiOshirase
 			}
 			appLifecycle.OnResume();
 		}
-	}
+    }
 }

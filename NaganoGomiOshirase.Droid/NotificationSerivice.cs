@@ -7,25 +7,35 @@ using System;
 using Android.Runtime;
 using Android.Util;
 using Java.Util;
+using Android.OS;
 
 namespace NaganoGomiOshirase.Droid
 {
 	public class Alerm
 	{
-		public static void Register(AlarmManager alarmManager, Context context)
-		{
-			var intent = new Intent(context, typeof(AlarmReceiver));
-			var pending = PendingIntent.GetBroadcast(context, 0, intent, PendingIntentFlags.UpdateCurrent);
-			var tomorrow = DateTime.Now.AddDays(1);  // 翌日
-			var exec_at = new DateTime(tomorrow.Year, tomorrow.Month, tomorrow.Day, 6, 0, 0);
-			// var exec_at = DateTime.Now.AddMinutes(1);
+        public static void Register(AlarmManager alarmManager, Context context)
+        {
+            var intent = new Intent(context, typeof(AlarmReceiver));
+            var pending = PendingIntent.GetBroadcast(context, 0, intent, PendingIntentFlags.UpdateCurrent);
+            var tomorrow = DateTime.Now.AddDays(1);  // 翌日
+            var exec_at = new DateTime(tomorrow.Year, tomorrow.Month, tomorrow.Day, 6, 0, 0);
+            // var exec_at = DateTime.Now.AddMinutes(1);
 
-			var calendar = Calendar.Instance;
-			calendar.TimeInMillis = Java.Lang.JavaSystem.CurrentTimeMillis();
-			calendar.Set(CalendarField.DayOfMonth, exec_at.Day);
-			calendar.Set(CalendarField.HourOfDay, exec_at.Hour);
-			calendar.Set(CalendarField.Minute, exec_at.Minute);
-			alarmManager.Set(AlarmType.Rtc, calendar.TimeInMillis, pending);
+            var calendar = Calendar.Instance;
+            calendar.TimeInMillis = Java.Lang.JavaSystem.CurrentTimeMillis();
+            calendar.Set(CalendarField.DayOfMonth, exec_at.Day);
+            calendar.Set(CalendarField.HourOfDay, exec_at.Hour);
+            calendar.Set(CalendarField.Minute, exec_at.Minute);
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+            {
+                alarmManager.SetAndAllowWhileIdle(AlarmType.Rtc, calendar.TimeInMillis, pending);
+            }
+            else
+            {
+                alarmManager.Set(AlarmType.Rtc, calendar.TimeInMillis, pending);
+            }
+                
+
 		}
 	}
 
